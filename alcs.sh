@@ -16,7 +16,7 @@ if [ ! -e "$1" ]; then
     exit 1
 fi
 
-if [ $# -eq 2 ] && [ ! "$2" = "false" ]; then
+if [ $# -eq 2 ] && [ ! "$2" = "false" ] && [ ! "$2" = "f" ]; then
     FLAG=true
 else
     FLAG=false
