@@ -33,7 +33,11 @@ function compile() {
     if ( $2 ); then
         $PDF_VIEWER $PDF &
     fi
-    rm $NO_NEED
+    for file in $NO_NEED; do
+        if [ -e $file ]; then
+            rm $file
+        fi
+    done
 }
 
 function check_timestamp() {
@@ -43,7 +47,7 @@ function check_timestamp() {
 while true; do
     check_timestamp $1
     if [ ! "$TIMESTAMP1" = "$TIMESTAMP2" ]; then
-        compile $1 $FLAG
+        yes x | compile $1 $FLAG
         TIMESTAMP1=$TIMESTAMP2
     fi
 done
