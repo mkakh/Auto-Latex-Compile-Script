@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 
 LATEX='platex'
 DVIPDF='dvipdfmx'
