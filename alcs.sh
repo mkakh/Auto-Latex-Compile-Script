@@ -2,12 +2,10 @@
 
 set -u
 
-LATEX='platex'
-DVIPDF='dvipdfmx'
-PDF_VIEWER="evince"
+LATEX='xelatex'
 
-if [ ! $# -eq 1 ] && [ ! $# -eq 2 ]; then
-    echo "Usage: $0 <file name> [false]"
+if [ ! $# -eq 1 ]; then
+    echo "Usage: $0 [file name]"
     exit 1
 fi
 
@@ -16,23 +14,22 @@ if [ ! -e "$1" ]; then
     exit 1
 fi
 
-if [ $# -eq 2 ] && [ ! "$2" = "false" ] && [ ! "$2" = "f" ]; then
-    FLAG=true
-else
-    FLAG=false
-fi
+TIMESTAMP1=0
+TIMESTAMP2=1
 
-TIMESTAMP1=""
-TIMESTAMP2=""
-
+# for xelatex and MuPDF
 function compile() {
-    NO_NEED="${1%.*}.aux ${1%.*}.dvi ${1%.*}.log"
-    DVI="${1%.*}.dvi"
     PDF="${1%.*}.pdf"
-    $LATEX $1 && $DVIPDF $DVI
-    if ( $2 ); then
-        $PDF_VIEWER $PDF &
-    fi
+    NO_NEED="${1%.*}.aux ${1%.*}.log"
+
+    # compile
+    xelatex $1
+    xelatex $1
+
+    # refresh mupdf
+    pkill -HUP mupdf
+
+    # remove dumb files
     for file in $NO_NEED; do
         if [ -e $file ]; then
             rm $file
@@ -40,14 +37,13 @@ function compile() {
     done
 }
 
-function check_timestamp() {
-    TIMESTAMP2=`\ls --full-time | awk /"$1"/'{print $7}'`
-}
-
 while true; do
-    check_timestamp $1
+    # check timestamp
+    TIMESTAMP2=`stat -c %Y $1`
+
+    # compile when timestamp is updated
     if [ ! "$TIMESTAMP1" = "$TIMESTAMP2" ]; then
-        yes x | compile $1 $FLAG
+        yes x | compile $1
         TIMESTAMP1=$TIMESTAMP2
     fi
 done
