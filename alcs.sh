@@ -23,8 +23,8 @@ function compile() {
     NO_NEED="${1%.*}.aux ${1%.*}.log"
 
     # compile
-    xelatex $1
-    xelatex $1
+    $LATEX $1
+    $LATEX $1
 
     # refresh mupdf
     pkill -HUP mupdf
