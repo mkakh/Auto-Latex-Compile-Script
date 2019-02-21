@@ -1,5 +1,7 @@
 # Automatic-Latex-Compile-Script
 
+**latexmkを使いましょう**
+
 ## Usage
 ```bash
 ./alcs.sh [filename]
